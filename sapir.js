@@ -536,12 +536,16 @@ var sapir = {
     renderOperationResponses: function(doc, responses) {
         var hasHeaders = false;
         var hasExamples = false;
+        var hasSchema = false;
         for (var responseName in responses) {
             if (responses[responseName].examples) {
                 hasExamples = true;
             }
             if (responses[responseName].headers) {
                 hasHeaders = true;
+            }
+            if (responses[responseName].schema) {
+                hasSchema = true;
             }
         }
         return $('<section>').append(
@@ -567,7 +571,7 @@ var sapir = {
                         hasHeaders && $('<td>').append(
                             parameter.headers && sapir.renderOperationResponseHeaders(doc, parameter.headers)
                         ),
-                        $('<td>').append(
+                        hasSchema && $('<td>').append(
                             sapir.renderSchemaObject(doc, parameter.schema)
                         ),
                         hasExamples && $('<td>').append(
