@@ -556,7 +556,7 @@ var sapir = {
                         $('<th>', {text: 'Code'}),
                         $('<th>', {text: 'Description'}),
                         hasHeaders && $('<th>', {text: 'Headers'}),
-                        $('<th>', {text: 'Schema'}),
+                        hasSchema && $('<th>', {text: 'Schema'}),
                         hasExamples && $('<th>', {text: 'Examples'})
                     )
                 ),
