@@ -7,7 +7,7 @@ By adding a one-line comment to your swagger/OpenAPI specification file, you can
 1. Rename/copy `swagger.json` to `swagger.html`
 2. Insert the following line at the top of your `swagger.html` file
 
-   ```#<script src='https://cdn.rawgit.com/kristofferingemansson/sapir/master/sapir.js'></script><script type='application/json'>```
+   ```#<script src='https://rawgit.com/kristofferingemansson/sapir/master/sapir.js'></script><script type='application/json'>```
 3. Open `swagger.html` in your browser
 4. Enjoy your documentation in hurman readable form!
 
