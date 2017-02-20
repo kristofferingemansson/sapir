@@ -306,7 +306,7 @@ var sapir = {
     },
 
     operationFragmentLink(doc, operationName, pathName) {
-        pathName = pathName.replace(/{([^}]*)}/g, '-$1');
+        pathName = pathName.replace(/{([^}]*)}/g, '-$1').replace(/\//g, '-');
         return operationName.replace(/[^a-z0-9_-]/ig, '') + '-' + pathName.replace(/[^a-z0-9_-]/ig, '');
     },
 
