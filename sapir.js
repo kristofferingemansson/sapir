@@ -1,6 +1,6 @@
 var sapir = {
     methods: ['get', 'put', 'post', 'delete', 'options', 'head', 'patch'],
-    
+
     injectCss: function() {
         var style = document.createElement('style');
         style.innerText = `
@@ -191,7 +191,7 @@ var sapir = {
         `;
         document.getElementsByTagName('head')[0].appendChild(style);
     },
-    
+
     loadScript: function(path, onLoad) {
         var script = document.createElement('script');
         script.async = true;
@@ -199,7 +199,7 @@ var sapir = {
         script.onload = onLoad;
         document.getElementsByTagName('head')[0].appendChild(script);
     },
-    
+
     renderDocument: function(i, script) {
         try {
             var doc = JSON.parse(script.innerText)
@@ -210,6 +210,7 @@ var sapir = {
         $(document.body).append(
             sapir.renderTitle(doc, doc.info),
             sapir.renderInfo(doc, doc.info),
+            sapir.renderToc(doc, doc.paths),
             doc.tags && sapir.renderTags(doc, doc.tags),
             sapir.renderPaths(doc, doc.paths),
             doc.definitions && sapir.renderDefinitions(doc, doc.definitions)
@@ -243,7 +244,7 @@ var sapir = {
         );
         return $section;
     },
-    
+
     renderInfoTermsOfService: function(doc, tos) {
         return $('<section>').append(
             $('<h4>', {text: 'Terms of service'}),
@@ -252,7 +253,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderInfoLicense: function(doc, license) {
         return $('<section>').append(
             $('<h4>', {text: 'License'}),
@@ -263,7 +264,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderInfoContact: function(doc, contact) {
         var $p = $('<p>');
         contact.name && $p.append(
@@ -283,7 +284,32 @@ var sapir = {
             $p
         );
     },
-    
+
+    renderToc: function(doc, paths) {
+        var $ul = $('<ul>');
+        $.each(paths, function(pathName, path) {
+            $.each(path, function(operationName, operation) {
+                $ul.append(
+                    $('<li>').append(
+                        $('<a>', {
+                            href: '#' + sapir.operationFragmentLink(doc, operationName, pathName),
+                            text: operationName.toUpperCase() + ' ' + pathName
+                        })
+                    )
+                );
+            });
+        });
+        return $('<section>', {'class': 'toc'}).append(
+            $('<h2>', {text: 'ToC'}),
+            $ul
+        );
+    },
+
+    operationFragmentLink(doc, operationName, pathName) {
+        pathName = pathName.replace(/{([^}]*)}/g, '-$1');
+        return operationName.replace(/[^a-z0-9_-]/ig, '') + '-' + pathName.replace(/[^a-z0-9_-]/ig, '');
+    },
+
     renderTags: function(doc, tags) {
         return $('<section>', {'class': 'tags'}).append(
             $('<table>').append(
@@ -293,7 +319,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderTag: function(doc, tag) {
         return $('<tr>').append(
             $('<td>').append(
@@ -307,14 +333,14 @@ var sapir = {
             )
         );
     },
-    
+
     renderTagExternalDocs: function(doc, externalDocs) {
         return $('<div>').append(
             externalDocs.description && sapir.renderGfm(doc, externalDocs.description),
             $('<a>', {href: externalDocs.url, text: externalDocs.url})
         );
     },
-    
+
     renderPaths: function(doc, paths) {
         return $('<section>').append(
             $('<header>').append(
@@ -325,7 +351,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderPath: function(doc, path, pathString) {
         $operations = $('<ul>', {'class': 'operations'});
         for (var methodName of sapir.methods) {
@@ -338,7 +364,7 @@ var sapir = {
             $operations
         );
     },
-    
+
     renderOperation: function(doc, pathString, data, methodName) {
         var $section = $('<section>');
         data.tags && $section.append(
@@ -363,18 +389,19 @@ var sapir = {
             sapir.renderOperationResponses(doc, data.responses)
         );
         return $('<li>', {'class': 'operation ' + methodName}).append(
+            $('<a>', {name: sapir.operationFragmentLink(doc, methodName, pathString)}),
             sapir.renderOperationHeader(doc, data, methodName, pathString),
             $section
         );
     },
-    
+
     renderOperationSummary: function(doc, summary) {
         return $('<section>').append(
             $('<h5>', {text: 'Summary'}),
             $('<p>', {text: summary})
         );
     },
-    
+
     renderOperationExternalDocs: function(doc, externalDocs) {
         var $p = $('<p>');
         externalDocs.description && $p.append(
@@ -388,7 +415,7 @@ var sapir = {
             $p
         );
     },
-    
+
     renderOperationHeader: function(doc, header, methodName, pathString) {
         var $header = $('<header>').append(
             $('<h4>', {'class': 'monospace', text: methodName.toUpperCase() + ' ' + pathString})
@@ -398,7 +425,7 @@ var sapir = {
         );
         return $header;
     },
-    
+
     renderOperationTags: function(doc, tags) {
         return $('<ul>', {'class': 'tags'}).append(
             $.map(tags, function(tag) {
@@ -408,18 +435,18 @@ var sapir = {
             })
         );
     },
-    
+
     renderOperationDescription: function(doc, description) {
         return $('<section>').append(
             $('<h5>', {text: 'Description'}),
             $('<p>', {text: description})
         );
     },
-    
+
     renderOperationSecurity: function(doc, security) {
         return $('<section>', {text: '@todo operation.security'});
     },
-    
+
     renderOperationParameters: function(doc, parameters) {
         return $('<section>').append(
             $('<h5>', {text: 'Parameters'}),
@@ -456,7 +483,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderItemsObject(doc, item) {
         return $('<ul>').append(
             $('<li>').append(
@@ -532,7 +559,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderOperationResponses: function(doc, responses) {
         var hasHeaders = false;
         var hasExamples = false;
@@ -582,7 +609,7 @@ var sapir = {
             )
         );
     },
-    
+
     renderOperationResponseHeaders(doc, headers) {
         return $('<table>', {'class': 'headers'}).append(
             $('<thead>').append(
@@ -603,7 +630,7 @@ var sapir = {
             }))
         );
     },
-    
+
     renderOperationResponseExamples(doc, examples) {
         return $.map(examples, function(example, contentType) {
             var out = typeof example !== 'string' ? JSON.stringify(example, null, 2) : example;
@@ -614,7 +641,7 @@ var sapir = {
     codeToClass: function(code) {
         return 'code code-' + ('' + code.substr(0, 1)) + '00';
     },
-    
+
     renderDefinitions: function(doc, definitions) {
         return $('<section>').append(
             $('<h2>', {text: 'Models'}),
@@ -623,14 +650,14 @@ var sapir = {
             )
         );
     },
-    
+
     renderDefinition: function(doc, definition, definitionName) {
         return $('<li>', {'class': 'definition'}).append(
             $('<h3>', {text: definitionName}),
             sapir.renderSchemaObject(doc, definition)
         );
     },
-    
+
     renderSchemaObject: function(doc, schema) {
         if (!schema) {
             return null;
@@ -640,7 +667,7 @@ var sapir = {
         }
         return $('<pre>', {text: JSON.stringify(schema, null, 2)});
     },
-    
+
     renderGfm: function(doc, text, as) {
         return $('<' + (as || 'div') + '>', {text: text});
     },
