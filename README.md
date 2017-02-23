@@ -13,5 +13,6 @@ By adding a one-line comment to your swagger/OpenAPI specification file, you can
 
 ## Limitations
 1. Currently only works with JSON, not with YAML
-2. Does not work in all browsers, use Chrome for now
+2. Styles does not work in all browsers, use Chrome or Firefox for now
 3. Lacks support for parts of swagger/OpenAPI specification
+4. Rendering of schema fields very rudimentary
