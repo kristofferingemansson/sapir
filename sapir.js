@@ -188,6 +188,9 @@ var sapir = {
             .definition {
                 margin-bottom: 1em;
             }
+            .error span {
+                color: red;
+            }
         `;
         document.getElementsByTagName('head')[0].appendChild(style);
     },
@@ -201,9 +204,16 @@ var sapir = {
     },
 
     renderDocument: function(i, script) {
+        if (script.innerText == '') {
+            return;
+        }
+
         try {
             var doc = JSON.parse(script.innerText)
         } catch (e) {
+            $(document.body).append(
+                sapir.renderParseError(e, script.innerText)
+            );
             return;
         }
 
@@ -215,6 +225,31 @@ var sapir = {
             sapir.renderPaths(doc, doc.paths),
             doc.definitions && sapir.renderDefinitions(doc, doc.definitions)
         );
+    },
+
+    renderParseError(e, def) {
+        var $error = $('<div>', {'class': 'error'}).append(
+            $('<p>', {text: 'Error parsing definition:'}),
+            $('<p>').append(
+                $('<code>', {text: e})
+            )
+        );
+
+        var positionMatch = /position (\d+)/.exec(e.message);
+        if (positionMatch) {
+            var pos = parseInt(positionMatch[1]);
+            var before = def.substr(Math.max(0, pos - 100), 100);
+            var after = def.substr(pos, 100);
+            $error.append(
+                $('<p>').append(
+                    $('<code>', {'class': 'monospace', text: '...' + before}),
+                    $('<span>', {text: '^'}),
+                    $('<code>', {'class': 'monospace', text: after + '...'})
+                )
+            );
+        }
+
+        return $error;
     },
 
     renderTitle: function(doc, info) {
