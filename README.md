@@ -16,3 +16,5 @@ By adding a one-line comment to your swagger/OpenAPI specification file, you can
 2. Styles does not work in all browsers, use Chrome or Firefox for now
 3. Lacks support for parts of swagger/OpenAPI specification
 4. Rendering of schema fields very rudimentary
+
+![GA tracking](https://www.google-analytics.com/collect?v=1&tid=UA-4881464-7&dp=/)
